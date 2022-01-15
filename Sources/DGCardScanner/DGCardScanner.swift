@@ -325,8 +325,8 @@ public class DGCardScanner: UIViewController {
             }
         }
         
-        if let creditCardName = self.creditCardName, let creditCardDate = creditCardDate, let creditCardCVV = creditCardCVV, let creditCardNumber = creditCardNumber {
-            print("[test] all informations are ready")
+        if self.creditCardName?.isEmpty == false && creditCardDate?.isEmpty == false && creditCardCVV?.isEmpty == false && creditCardNumber?.isEmpty == false {
+            self.scanCompleted()
         }
     }
 
