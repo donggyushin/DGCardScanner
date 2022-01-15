@@ -47,10 +47,8 @@ public class DGCardScanner: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
-    public class func getScanner(resultsHandler: @escaping (_ number: String?, _ date: String?, _ cvv: String?) -> Void) -> UINavigationController {
-        let viewScanner = DGCardScanner(resultsHandler: resultsHandler)
-        let navigation = UINavigationController(rootViewController: viewScanner)
-        return navigation
+    public class func getScanner(resultsHandler: @escaping (_ number: String?, _ date: String?, _ cvv: String?) -> Void) -> UIViewController {
+        DGCardScanner(resultsHandler: resultsHandler)
     }
 
     required init?(coder: NSCoder) {
