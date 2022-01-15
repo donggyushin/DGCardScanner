@@ -38,15 +38,15 @@ public class DGCardScanner: UIViewController {
     public var buttonConfirmBackgroundColor: UIColor = .red
 
     // MARK: - Instance dependencies
-    private var resultsHandler: (_ number: String?, _ date: String?, _ cvv: String?) -> Void?
+    private let resultsHandler: (_ number: String, _ date: String, _ cvv: String, _ name: String) -> Void
 
     // MARK: - Initializers
-    init(resultsHandler: @escaping (_ number: String?, _ date: String?, _ cvv: String?) -> Void) {
+    init(resultsHandler: @escaping (_ number: String, _ date: String, _ cvv: String, _ name: String) -> Void) {
         self.resultsHandler = resultsHandler
         super.init(nibName: nil, bundle: nil)
     }
 
-    public class func getScanner(resultsHandler: @escaping (_ number: String?, _ date: String?, _ cvv: String?) -> Void) -> UIViewController {
+    public class func getScanner(resultsHandler: @escaping (_ number: String, _ date: String, _ cvv: String, _ name: String) -> Void) -> UIViewController {
         DGCardScanner(resultsHandler: resultsHandler)
     }
 
@@ -217,8 +217,8 @@ public class DGCardScanner: UIViewController {
     }
 
     // MARK: - Completed process
-    @objc func scanCompleted() {
-        resultsHandler(creditCardNumber, creditCardDate, creditCardCVV)
+    @objc func scanCompleted(creditCardNumber: String, creditCardDate: String, creditCardCVV: String, creditCardName: String) {
+        resultsHandler(creditCardNumber, creditCardDate, creditCardCVV, creditCardName)
         stop()
         dismiss(animated: true, completion: nil)
     }
@@ -324,9 +324,8 @@ public class DGCardScanner: UIViewController {
             }
         }
         
-        if self.creditCardName?.isEmpty == false && creditCardDate?.isEmpty == false && creditCardCVV?.isEmpty == false && creditCardNumber?.isEmpty == false {
-            self.scanCompleted()
-        }
+        guard let creditCardName = self.creditCardName, let creditCardDate = self.creditCardDate, let creditCardCVV = self.creditCardCVV, let creditCardNumber = self.creditCardNumber else { return }
+        scanCompleted(creditCardNumber: creditCardNumber, creditCardDate: creditCardDate, creditCardCVV: creditCardCVV, creditCardName: creditCardName)
     }
 
     private func tapticFeedback() {
