@@ -69,11 +69,6 @@ public class DGCardScanner: UIViewController {
         super.viewDidLoad()
         setupCaptureSession()
         captureSession.startRunning()
-        title = viewTitle
-
-        let buttomItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(scanCompleted))
-        buttomItem.tintColor = .white
-        navigationItem.leftBarButtonItem = buttomItem
     }
 
     override public func viewDidLayoutSubviews() {
