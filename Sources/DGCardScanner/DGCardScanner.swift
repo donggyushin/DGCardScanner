@@ -36,7 +36,6 @@ public class DGCardScanner: UIViewController {
     public var hintBottomText = "Touch a recognized value to delete the value and try again"
     public var buttonConfirmTitle = "Confirm"
     public var buttonConfirmBackgroundColor: UIColor = .red
-    public var viewTitle = "Card scanner"
 
     // MARK: - Instance dependencies
     private var resultsHandler: (_ number: String?, _ date: String?, _ cvv: String?) -> Void?
