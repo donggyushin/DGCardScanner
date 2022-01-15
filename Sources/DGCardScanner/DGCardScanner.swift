@@ -324,6 +324,10 @@ public class DGCardScanner: UIViewController {
                 continue
             }
         }
+        
+        if let creditCardName = self.creditCardName, let creditCardDate = creditCardDate, let creditCardCVV = creditCardCVV, let creditCardNumber = creditCardNumber {
+            print("[test] all informations are ready")
+        }
     }
 
     private func tapticFeedback() {
