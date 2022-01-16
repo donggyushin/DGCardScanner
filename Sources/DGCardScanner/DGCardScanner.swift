@@ -189,7 +189,7 @@ public class DGCardScanner: UIViewController {
         }
         
         guard let creditCardName = self.creditCardName, let creditCardDate = self.creditCardDate, let creditCardNumber = self.creditCardNumber else { return }
-        scanCompleted(creditCardNumber: creditCardNumber, creditCardDate: creditCardDate, creditCardName: creditCardName)
+        if creditCardName.isEmpty == false && creditCardDate.isEmpty == false && creditCardNumber.isEmpty == false { scanCompleted(creditCardNumber: creditCardNumber, creditCardDate: creditCardDate, creditCardName: creditCardName) }
     }
     
     private func parseCardName(_ cardName: String) -> String? {
