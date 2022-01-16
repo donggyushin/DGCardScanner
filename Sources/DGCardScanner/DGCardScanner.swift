@@ -216,6 +216,7 @@ public class DGCardScanner: UIViewController {
         } else {
             self.matchedCount = 0
         }
+        
         self.cardInformation = cardInformation
         
         if self.matchedCount >= 4 {
@@ -262,17 +263,8 @@ private extension String {
     var isDate: Bool {
         let arrayDate = components(separatedBy: "/")
         if arrayDate.count == 2 {
-            let currentYear = Calendar.current.component(.year, from: Date())
-            if let month = Int(arrayDate[0]), let year = Int(arrayDate[1]) {
-                if month > 12 || month < 1 {
-                    return false
-                }
-                if year < (currentYear - 2000 + 20) && year >= (currentYear - 2000) { // Between current year and 20 years ahead
-                    return true
-                }
-                if year >= currentYear && year < (currentYear + 20) { // Between current year and 20 years ahead
-                    return true
-                }
+            if let month = Int(arrayDate[0]) {
+                return month <= 12 && month >= 1
             }
         }
         return false
