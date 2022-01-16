@@ -19,7 +19,6 @@ public class DGCardScanner: UIViewController {
 
     private var creditCardNumber: String?
     private var creditCardName: String?
-//    private var creditCardCVV: String?
     private var creditCardDate: String?
 
     private let videoOutput = AVCaptureVideoDataOutput()
@@ -27,7 +26,7 @@ public class DGCardScanner: UIViewController {
     // MARK: - Public Properties
     public var labelCardNumber: UILabel?
     public var labelCardDate: UILabel?
-    public var labelCardCVV: UILabel?
+//    public var labelCardCVV: UILabel?
     public var labelHintBottom: UILabel?
     public var labelHintTop: UILabel?
     public var buttonComplete: UIButton?
@@ -146,15 +145,15 @@ public class DGCardScanner: UIViewController {
 
         let labelCardCVVX = viewX + 200
         let labelCardCVVY = bottomY - 90
-        labelCardCVV = UILabel(frame: CGRect(x: labelCardCVVX, y: labelCardCVVY, width: 100, height: 30))
-        view.addSubview(labelCardCVV!)
-        labelCardCVV?.translatesAutoresizingMaskIntoConstraints = false
-        labelCardCVV?.leftAnchor.constraint(equalTo: view.leftAnchor, constant: labelCardCVVX).isActive = true
-        labelCardCVV?.topAnchor.constraint(equalTo: view.topAnchor, constant: labelCardCVVY).isActive = true
-        labelCardCVV?.font = UIFont.systemFont(ofSize: 17, weight: .bold)
-        labelCardCVV?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(clearCardCVV)))
-        labelCardCVV?.isUserInteractionEnabled = true
-        labelCardCVV?.textColor = .white
+//        labelCardCVV = UILabel(frame: CGRect(x: labelCardCVVX, y: labelCardCVVY, width: 100, height: 30))
+//        view.addSubview(labelCardCVV!)
+//        labelCardCVV?.translatesAutoresizingMaskIntoConstraints = false
+//        labelCardCVV?.leftAnchor.constraint(equalTo: view.leftAnchor, constant: labelCardCVVX).isActive = true
+//        labelCardCVV?.topAnchor.constraint(equalTo: view.topAnchor, constant: labelCardCVVY).isActive = true
+//        labelCardCVV?.font = UIFont.systemFont(ofSize: 17, weight: .bold)
+//        labelCardCVV?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(clearCardCVV)))
+//        labelCardCVV?.isUserInteractionEnabled = true
+//        labelCardCVV?.textColor = .white
 
         let labelHintTopY = viewY - 40
         labelHintTop = UILabel(frame: CGRect(x: labelCardCVVX, y: labelCardCVVY, width: widht, height: 30))
@@ -212,7 +211,7 @@ public class DGCardScanner: UIViewController {
     }
 
     @objc func clearCardCVV() {
-        labelCardCVV?.text = ""
+//        labelCardCVV?.text = ""
 //        creditCardCVV = nil
     }
 
