@@ -22,6 +22,8 @@ public class DGCardScanner: UIViewController {
     private var creditCardNumber: String?
     private var creditCardName: String?
     private var creditCardDate: String?
+    private var cardInformation: CardInformation?
+    private var matchedCount = 0
 
     private let videoOutput = AVCaptureVideoDataOutput()
     
@@ -207,7 +209,18 @@ public class DGCardScanner: UIViewController {
         }
         
         guard let creditCardName = self.creditCardName, let creditCardDate = self.creditCardDate, let creditCardNumber = self.creditCardNumber else { return }
-        if creditCardName.isEmpty == false && creditCardDate.isEmpty == false && creditCardNumber.isEmpty == false { scanCompleted(creditCardNumber: creditCardNumber, creditCardDate: creditCardDate, creditCardName: creditCardName) }
+        
+        let cardInformation: CardInformation = .init(cardName: creditCardName, cardDate: creditCardDate, cardNumber: creditCardNumber)
+        if self.cardInformation == cardInformation {
+            self.matchedCount += 1
+        } else {
+            self.matchedCount = 0
+        }
+        self.cardInformation = cardInformation
+        
+        if self.matchedCount >= 4 {
+            scanCompleted(creditCardNumber: creditCardNumber, creditCardDate: creditCardDate, creditCardName: creditCardName)
+        }
     }
     
     private func parseCardName(_ cardName: String) -> String? {
@@ -304,5 +317,13 @@ class PartialTransparentView: UIView {
 extension DGCardScanner {
     public class Appearance {
         public var helperText = "카드를 가운데에 정렬시키세요."
+    }
+}
+
+extension DGCardScanner {
+    struct CardInformation: Equatable {
+        let cardName: String
+        let cardDate: String
+        let cardNumber: String
     }
 }
