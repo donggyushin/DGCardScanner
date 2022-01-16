@@ -19,7 +19,7 @@ public class DGCardScanner: UIViewController {
 
     private var creditCardNumber: String?
     private var creditCardName: String?
-    private var creditCardCVV: String?
+//    private var creditCardCVV: String?
     private var creditCardDate: String?
 
     private let videoOutput = AVCaptureVideoDataOutput()
@@ -38,15 +38,15 @@ public class DGCardScanner: UIViewController {
     public var buttonConfirmBackgroundColor: UIColor = .red
 
     // MARK: - Instance dependencies
-    private let resultsHandler: (_ number: String, _ date: String, _ cvv: String, _ name: String) -> Void
+    private let resultsHandler: (_ number: String, _ date: String, _ name: String) -> Void
 
     // MARK: - Initializers
-    init(resultsHandler: @escaping (_ number: String, _ date: String, _ cvv: String, _ name: String) -> Void) {
+    init(resultsHandler: @escaping (_ number: String, _ date: String, _ name: String) -> Void) {
         self.resultsHandler = resultsHandler
         super.init(nibName: nil, bundle: nil)
     }
 
-    public class func getScanner(resultsHandler: @escaping (_ number: String, _ date: String, _ cvv: String, _ name: String) -> Void) -> UIViewController {
+    public class func getScanner(resultsHandler: @escaping (_ number: String, _ date: String, _ name: String) -> Void) -> UIViewController {
         DGCardScanner(resultsHandler: resultsHandler)
     }
 
@@ -213,12 +213,12 @@ public class DGCardScanner: UIViewController {
 
     @objc func clearCardCVV() {
         labelCardCVV?.text = ""
-        creditCardCVV = nil
+//        creditCardCVV = nil
     }
 
     // MARK: - Completed process
-    @objc func scanCompleted(creditCardNumber: String, creditCardDate: String, creditCardCVV: String, creditCardName: String) {
-        resultsHandler(creditCardNumber, creditCardDate, creditCardCVV, creditCardName)
+    @objc func scanCompleted(creditCardNumber: String, creditCardDate: String, creditCardName: String) {
+        resultsHandler(creditCardNumber, creditCardDate, creditCardName)
         stop()
         dismiss(animated: true, completion: nil)
     }
@@ -289,16 +289,16 @@ public class DGCardScanner: UIViewController {
                 continue
             }
 
-            if creditCardCVV == nil &&
-                trimmed.count == 3 &&
-                trimmed.isOnlyNumbers {
-                creditCardCVV = line
-                DispatchQueue.main.async {
-                    self.labelCardCVV?.text = line
-                    self.tapticFeedback()
-                }
-                continue
-            }
+//            if creditCardCVV == nil &&
+//                trimmed.count == 3 &&
+//                trimmed.isOnlyNumbers {
+//                creditCardCVV = line
+//                DispatchQueue.main.async {
+//                    self.labelCardCVV?.text = line
+//                    self.tapticFeedback()
+//                }
+//                continue
+//            }
 
             if creditCardDate == nil &&
                 trimmed.count >= 5 && // 12/20
@@ -324,8 +324,8 @@ public class DGCardScanner: UIViewController {
             }
         }
         
-        guard let creditCardName = self.creditCardName, let creditCardDate = self.creditCardDate, let creditCardCVV = self.creditCardCVV, let creditCardNumber = self.creditCardNumber else { return }
-        scanCompleted(creditCardNumber: creditCardNumber, creditCardDate: creditCardDate, creditCardCVV: creditCardCVV, creditCardName: creditCardName)
+        guard let creditCardName = self.creditCardName, let creditCardDate = self.creditCardDate, let creditCardNumber = self.creditCardNumber else { return }
+        scanCompleted(creditCardNumber: creditCardNumber, creditCardDate: creditCardDate, creditCardName: creditCardName)
     }
 
     private func tapticFeedback() {
