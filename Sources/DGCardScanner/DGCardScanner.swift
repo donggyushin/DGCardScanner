@@ -5,6 +5,8 @@ import UIKit
 import Vision
 
 public class DGCardScanner: UIViewController {
+    public static var appearance = Appearance()
+    
     // MARK: - Private Properties
     private let captureSession = AVCaptureSession()
     private lazy var previewLayer: AVCaptureVideoPreviewLayer = {
@@ -19,35 +21,29 @@ public class DGCardScanner: UIViewController {
 
     private var creditCardNumber: String?
     private var creditCardName: String?
-    private var creditCardCVV: String?
     private var creditCardDate: String?
+    private var cardInformation: CardInformation?
+    private var matchedCount = 0
 
     private let videoOutput = AVCaptureVideoDataOutput()
-
-    // MARK: - Public Properties
-    public var labelCardNumber: UILabel?
-    public var labelCardDate: UILabel?
-    public var labelCardCVV: UILabel?
-    public var labelHintBottom: UILabel?
-    public var labelHintTop: UILabel?
-    public var buttonComplete: UIButton?
-
-    public var hintTopText = "Center your card until the fields are recognized"
-    public var hintBottomText = "Touch a recognized value to delete the value and try again"
-    public var buttonConfirmTitle = "Confirm"
-    public var buttonConfirmBackgroundColor: UIColor = .red
-    public var viewTitle = "Card scanner"
+    
+    private lazy var helperLabel: UILabel = {
+        let view = UILabel()
+        view.text = DGCardScanner.appearance.helperText
+        view.textColor = .white
+        return view
+    }()
 
     // MARK: - Instance dependencies
-    private var resultsHandler: (_ number: String?, _ date: String?, _ cvv: String?) -> Void?
+    private let resultsHandler: (_ number: String, _ date: String, _ name: String) -> Void
 
     // MARK: - Initializers
-    init(resultsHandler: @escaping (_ number: String?, _ date: String?, _ cvv: String?) -> Void) {
+    init(resultsHandler: @escaping (_ number: String, _ date: String, _ name: String) -> Void) {
         self.resultsHandler = resultsHandler
         super.init(nibName: nil, bundle: nil)
     }
 
-    public class func getScanner(resultsHandler: @escaping (_ number: String?, _ date: String?, _ cvv: String?) -> Void) -> UIViewController {
+    public class func getScanner(resultsHandler: @escaping (_ number: String, _ date: String, _ name: String) -> Void) -> UIViewController {
         DGCardScanner(resultsHandler: resultsHandler)
     }
 
@@ -118,110 +114,28 @@ public class DGCardScanner: UIViewController {
         viewGuide.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
         viewGuide.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
         view.bringSubviewToFront(viewGuide)
-
+        
         let bottomY = (UIScreen.main.bounds.height / 2) + (height / 2) - 100
-
-        let labelCardNumberX = viewX + 20
-        let labelCardNumberY = bottomY - 50
-        labelCardNumber = UILabel(frame: CGRect(x: labelCardNumberX, y: labelCardNumberY, width: 100, height: 30))
-        view.addSubview(labelCardNumber!)
-        labelCardNumber?.translatesAutoresizingMaskIntoConstraints = false
-        labelCardNumber?.leftAnchor.constraint(equalTo: view.leftAnchor, constant: labelCardNumberX).isActive = true
-        labelCardNumber?.topAnchor.constraint(equalTo: view.topAnchor, constant: labelCardNumberY).isActive = true
-        labelCardNumber?.font = UIFont.systemFont(ofSize: 17, weight: .bold)
-        labelCardNumber?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(clearCardNumber)))
-        labelCardNumber?.isUserInteractionEnabled = true
-        labelCardNumber?.textColor = .white
-
-        let labelCardDateX = viewX + 20
-        let labelCardDateY = bottomY - 90
-        labelCardDate = UILabel(frame: CGRect(x: labelCardDateX, y: labelCardDateY, width: 100, height: 30))
-        view.addSubview(labelCardDate!)
-        labelCardDate?.translatesAutoresizingMaskIntoConstraints = false
-        labelCardDate?.leftAnchor.constraint(equalTo: view.leftAnchor, constant: labelCardDateX).isActive = true
-        labelCardDate?.topAnchor.constraint(equalTo: view.topAnchor, constant: labelCardDateY).isActive = true
-        labelCardDate?.font = UIFont.systemFont(ofSize: 17, weight: .bold)
-        labelCardDate?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(clearCardDate)))
-        labelCardDate?.isUserInteractionEnabled = true
-        labelCardDate?.textColor = .white
-
-        let labelCardCVVX = viewX + 200
-        let labelCardCVVY = bottomY - 90
-        labelCardCVV = UILabel(frame: CGRect(x: labelCardCVVX, y: labelCardCVVY, width: 100, height: 30))
-        view.addSubview(labelCardCVV!)
-        labelCardCVV?.translatesAutoresizingMaskIntoConstraints = false
-        labelCardCVV?.leftAnchor.constraint(equalTo: view.leftAnchor, constant: labelCardCVVX).isActive = true
-        labelCardCVV?.topAnchor.constraint(equalTo: view.topAnchor, constant: labelCardCVVY).isActive = true
-        labelCardCVV?.font = UIFont.systemFont(ofSize: 17, weight: .bold)
-        labelCardCVV?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(clearCardCVV)))
-        labelCardCVV?.isUserInteractionEnabled = true
-        labelCardCVV?.textColor = .white
-
-        let labelHintTopY = viewY - 40
-        labelHintTop = UILabel(frame: CGRect(x: labelCardCVVX, y: labelCardCVVY, width: widht, height: 30))
-        view.addSubview(labelHintTop!)
-        labelHintTop?.translatesAutoresizingMaskIntoConstraints = false
-        labelHintTop?.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20).isActive = true
-        labelHintTop?.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
-        labelHintTop?.topAnchor.constraint(equalTo: view.topAnchor, constant: labelHintTopY).isActive = true
-        labelHintTop?.font = UIFont.systemFont(ofSize: 13, weight: .regular)
-        labelHintTop?.text = hintTopText
-        labelHintTop?.numberOfLines = 0
-        labelHintTop?.textAlignment = .center
-        labelHintTop?.textColor = .white
-
         let labelHintBottomY = bottomY + 30
-        labelHintBottom = UILabel(frame: CGRect(x: labelCardCVVX, y: labelCardCVVY, width: widht, height: 30))
-        view.addSubview(labelHintBottom!)
-        labelHintBottom?.translatesAutoresizingMaskIntoConstraints = false
-        labelHintBottom?.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20).isActive = true
-        labelHintBottom?.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
-        labelHintBottom?.topAnchor.constraint(equalTo: view.topAnchor, constant: labelHintBottomY).isActive = true
-        labelHintBottom?.font = UIFont.systemFont(ofSize: 12, weight: .regular)
-        labelHintBottom?.text = hintBottomText
-        labelHintBottom?.numberOfLines = 0
-        labelHintBottom?.textAlignment = .center
-        labelHintBottom?.textColor = .white
-
-        let buttonCompleteX = viewX
-        let buttonCompleteY = UIScreen.main.bounds.height - 90
-        buttonComplete = UIButton(frame: CGRect(x: buttonCompleteX, y: buttonCompleteY, width: 100, height: 50))
-        view.addSubview(buttonComplete!)
-        buttonComplete?.translatesAutoresizingMaskIntoConstraints = false
-        buttonComplete?.leftAnchor.constraint(equalTo: view.leftAnchor, constant: viewX).isActive = true
-        buttonComplete?.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: viewX * -1).isActive = true
-        buttonComplete?.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -90).isActive = true
-        buttonComplete?.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        buttonComplete?.setTitle(buttonConfirmTitle, for: .normal)
-        buttonComplete?.backgroundColor = buttonConfirmBackgroundColor
-        buttonComplete?.layer.cornerRadius = 10
-        buttonComplete?.layer.masksToBounds = true
-        buttonComplete?.addTarget(self, action: #selector(scanCompleted), for: .touchUpInside)
-
+        
+        view.addSubview(helperLabel)
+        helperLabel.translatesAutoresizingMaskIntoConstraints = false
+        helperLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        helperLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: labelHintBottomY).isActive = true
+        
+        
         view.backgroundColor = .black
     }
 
-    // MARK: - Clear on touch
-    @objc func clearCardNumber() {
-        labelCardNumber?.text = ""
-        creditCardNumber = nil
-    }
-
-    @objc func clearCardDate() {
-        labelCardDate?.text = ""
-        creditCardDate = nil
-    }
-
-    @objc func clearCardCVV() {
-        labelCardCVV?.text = ""
-        creditCardCVV = nil
-    }
 
     // MARK: - Completed process
-    @objc func scanCompleted() {
-        resultsHandler(creditCardNumber, creditCardDate, creditCardCVV)
+    @objc func scanCompleted(creditCardNumber: String, creditCardDate: String, creditCardName: String) {
+        resultsHandler(creditCardNumber, creditCardDate, creditCardName)
         stop()
-        dismiss(animated: true, completion: nil)
+        DispatchQueue.main.async {
+            self.dismiss(animated: true, completion: nil)
+        }
+        
     }
 
     private func stop() {
@@ -274,60 +188,48 @@ public class DGCardScanner: UIViewController {
         let arrayLines = texts.flatMap({ $0.topCandidates(20).map({ $0.string }) })
 
         for line in arrayLines {
-            print("Trying to parse: \(line)")
-
-            let trimmed = line.replacingOccurrences(of: " ", with: "")
-
-            if creditCardNumber == nil &&
-                trimmed.count >= 15 &&
-                trimmed.count <= 16 &&
-                trimmed.isOnlyNumbers {
+            let trimmed = line.replacingOccurrences(of: " ", with: "").lowercased()
+            if trimmed.count >= 15 && trimmed.count <= 16 && trimmed.isOnlyNumbers {
                 creditCardNumber = line
-                DispatchQueue.main.async {
-                    self.labelCardNumber?.text = line
-                    self.tapticFeedback()
-                }
                 continue
             }
-
-            if creditCardCVV == nil &&
-                trimmed.count == 3 &&
-                trimmed.isOnlyNumbers {
-                creditCardCVV = line
-                DispatchQueue.main.async {
-                    self.labelCardCVV?.text = line
-                    self.tapticFeedback()
-                }
+            
+            let last5Characters = String(trimmed.suffix(5))
+            if last5Characters.isDate {
+                creditCardDate = last5Characters
                 continue
             }
-
-            if creditCardDate == nil &&
-                trimmed.count >= 5 && // 12/20
-                trimmed.count <= 7 && // 12/2020
-                trimmed.isDate {
-                
-                creditCardDate = line
-                DispatchQueue.main.async {
-                    self.labelCardDate?.text = line
-                    self.tapticFeedback()
+            
+            if trimmed.contains("card") && trimmed.isOnlyAlpha {
+                if let cardName = parseCardName(line), cardName.isEmpty == false {
+                    creditCardName = cardName
+                    continue
                 }
-                continue
-            }
-
-            // Not used yet
-            if creditCardName == nil &&
-                trimmed.count > 10 &&
-                line.contains(" ") &&
-                trimmed.isOnlyAlpha {
-                
-                creditCardName = line
-                continue
             }
         }
         
-        if self.creditCardName?.isEmpty == false && creditCardDate?.isEmpty == false && creditCardCVV?.isEmpty == false && creditCardNumber?.isEmpty == false {
-            self.scanCompleted()
+        guard let creditCardName = self.creditCardName, let creditCardDate = self.creditCardDate, let creditCardNumber = self.creditCardNumber else { return }
+        
+        let cardInformation: CardInformation = .init(cardName: creditCardName, cardDate: creditCardDate, cardNumber: creditCardNumber)
+        if self.cardInformation == cardInformation {
+            self.matchedCount += 1
+        } else {
+            self.matchedCount = 0
         }
+        
+        self.cardInformation = cardInformation
+        
+        if self.matchedCount >= 4 {
+            scanCompleted(creditCardNumber: creditCardNumber, creditCardDate: creditCardDate, creditCardName: creditCardName)
+        }
+    }
+    
+    private func parseCardName(_ cardName: String) -> String? {
+        let cardName = cardName.uppercased()
+        if let range = cardName.range(of: "CARD") {
+            return String(cardName[..<range.lowerBound])
+        }
+        return nil
     }
 
     private func tapticFeedback() {
@@ -361,17 +263,8 @@ private extension String {
     var isDate: Bool {
         let arrayDate = components(separatedBy: "/")
         if arrayDate.count == 2 {
-            let currentYear = Calendar.current.component(.year, from: Date())
-            if let month = Int(arrayDate[0]), let year = Int(arrayDate[1]) {
-                if month > 12 || month < 1 {
-                    return false
-                }
-                if year < (currentYear - 2000 + 20) && year >= (currentYear - 2000) { // Between current year and 20 years ahead
-                    return true
-                }
-                if year >= currentYear && year < (currentYear + 20) { // Between current year and 20 years ahead
-                    return true
-                }
+            if let month = Int(arrayDate[0]) {
+                return month <= 12 && month >= 1
             }
         }
         return false
@@ -410,5 +303,19 @@ class PartialTransparentView: UIView {
             UIGraphicsGetCurrentContext()?.setBlendMode(CGBlendMode.copy)
             path.fill()
         }
+    }
+}
+
+extension DGCardScanner {
+    public class Appearance {
+        public var helperText = "카드를 가운데에 정렬시키세요."
+    }
+}
+
+extension DGCardScanner {
+    struct CardInformation: Equatable {
+        let cardName: String
+        let cardDate: String
+        let cardNumber: String
     }
 }
