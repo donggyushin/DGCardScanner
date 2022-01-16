@@ -272,13 +272,23 @@ public class DGCardScanner: UIViewController {
             }
             
             if trimmed.contains("card") && trimmed.isOnlyAlpha {
-                creditCardName = line
-                continue
+                if let cardName = parseCardName(line) {
+                    creditCardName = cardName
+                    continue
+                }
             }
         }
         
         guard let creditCardName = self.creditCardName, let creditCardDate = self.creditCardDate, let creditCardNumber = self.creditCardNumber else { return }
         scanCompleted(creditCardNumber: creditCardNumber, creditCardDate: creditCardDate, creditCardName: creditCardName)
+    }
+    
+    private func parseCardName(_ cardName: String) -> String? {
+        let cardName = cardName.uppercased()
+        if let range = cardName.range(of: "CARD") {
+            return String(cardName[..<range.lowerBound])
+        }
+        return nil
     }
 
     private func tapticFeedback() {
