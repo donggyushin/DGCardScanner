@@ -204,7 +204,10 @@ public class DGCardScanner: UIViewController {
     @objc func scanCompleted(creditCardNumber: String, creditCardDate: String, creditCardName: String) {
         resultsHandler(creditCardNumber, creditCardDate, creditCardName)
         stop()
-        dismiss(animated: true, completion: nil)
+        DispatchQueue.main.async {
+            self.dismiss(animated: true, completion: nil)
+        }
+        
     }
 
     private func stop() {
@@ -257,41 +260,18 @@ public class DGCardScanner: UIViewController {
         let arrayLines = texts.flatMap({ $0.topCandidates(20).map({ $0.string }) })
 
         for line in arrayLines {
-            print("Trying to parse: \(line)")
-
-            let trimmed = line.replacingOccurrences(of: " ", with: "")
-
-            if creditCardNumber == nil &&
-                trimmed.count >= 15 &&
-                trimmed.count <= 16 &&
-                trimmed.isOnlyNumbers {
+            let trimmed = line.replacingOccurrences(of: " ", with: "").lowercased()
+            if trimmed.count >= 15 && trimmed.count <= 16 && trimmed.isOnlyNumbers {
                 creditCardNumber = line
-                DispatchQueue.main.async {
-                    self.labelCardNumber?.text = line
-                    self.tapticFeedback()
-                }
                 continue
             }
 
-            if creditCardDate == nil &&
-                trimmed.count >= 5 && // 12/20
-                trimmed.count <= 7 && // 12/2020
-                trimmed.isDate {
-                
+            if trimmed.count >= 5 && trimmed.count <= 7 && trimmed.isDate {
                 creditCardDate = line
-                DispatchQueue.main.async {
-                    self.labelCardDate?.text = line
-                    self.tapticFeedback()
-                }
                 continue
             }
-
-            // Not used yet
-            if creditCardName == nil &&
-                trimmed.count > 10 &&
-                line.contains(" ") &&
-                trimmed.isOnlyAlpha {
-                
+            
+            if trimmed.contains("card") && trimmed.isOnlyAlpha {
                 creditCardName = line
                 continue
             }
