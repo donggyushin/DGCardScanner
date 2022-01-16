@@ -16,4 +16,4 @@ jobs:
     - name: Show eligible build destinations
       run: xcodebuild -showdestinations -scheme DGCardScanner
     - name: Build and test ( iOS 15.0)
-      run: xcodebuild test -scheme DGCardScanner -destination 'platform=iOS Simulator,OS=15.0,name=iPhone 12 Pro'
+      run: xcodebuild test -scheme DGCardScanner -destination 'platform=iOS Simulator,OS=15.0,name=iPhone 12 Pro' CODE_SIGNING_ALLOWED=NO IPHONEOS_DEPLOYMENT_TARGET=13.0
