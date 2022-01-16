@@ -265,9 +265,10 @@ public class DGCardScanner: UIViewController {
                 creditCardNumber = line
                 continue
             }
-
-            if trimmed.count >= 5 && trimmed.count <= 7 && trimmed.isDate {
-                creditCardDate = line
+            
+            let last5Characters = String(trimmed.suffix(5))
+            if last5Characters.isDate {
+                creditCardDate = last5Characters
                 continue
             }
             
