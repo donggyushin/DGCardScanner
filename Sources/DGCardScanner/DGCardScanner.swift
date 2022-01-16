@@ -23,18 +23,6 @@ public class DGCardScanner: UIViewController {
 
     private let videoOutput = AVCaptureVideoDataOutput()
 
-    // MARK: - Public Properties
-    public var labelCardNumber: UILabel?
-    public var labelCardDate: UILabel?
-    public var labelHintBottom: UILabel?
-    public var labelHintTop: UILabel?
-    public var buttonComplete: UIButton?
-
-    public var hintTopText = "Center your card until the fields are recognized"
-    public var hintBottomText = "Touch a recognized value to delete the value and try again"
-    public var buttonConfirmTitle = "Confirm"
-    public var buttonConfirmBackgroundColor: UIColor = .red
-
     // MARK: - Instance dependencies
     private let resultsHandler: (_ number: String, _ date: String, _ name: String) -> Void
 
@@ -116,89 +104,9 @@ public class DGCardScanner: UIViewController {
         viewGuide.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
         view.bringSubviewToFront(viewGuide)
 
-        let bottomY = (UIScreen.main.bounds.height / 2) + (height / 2) - 100
-
-        let labelCardNumberX = viewX + 20
-        let labelCardNumberY = bottomY - 50
-        labelCardNumber = UILabel(frame: CGRect(x: labelCardNumberX, y: labelCardNumberY, width: 100, height: 30))
-        view.addSubview(labelCardNumber!)
-        labelCardNumber?.translatesAutoresizingMaskIntoConstraints = false
-        labelCardNumber?.leftAnchor.constraint(equalTo: view.leftAnchor, constant: labelCardNumberX).isActive = true
-        labelCardNumber?.topAnchor.constraint(equalTo: view.topAnchor, constant: labelCardNumberY).isActive = true
-        labelCardNumber?.font = UIFont.systemFont(ofSize: 17, weight: .bold)
-        labelCardNumber?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(clearCardNumber)))
-        labelCardNumber?.isUserInteractionEnabled = true
-        labelCardNumber?.textColor = .white
-
-        let labelCardDateX = viewX + 20
-        let labelCardDateY = bottomY - 90
-        labelCardDate = UILabel(frame: CGRect(x: labelCardDateX, y: labelCardDateY, width: 100, height: 30))
-        view.addSubview(labelCardDate!)
-        labelCardDate?.translatesAutoresizingMaskIntoConstraints = false
-        labelCardDate?.leftAnchor.constraint(equalTo: view.leftAnchor, constant: labelCardDateX).isActive = true
-        labelCardDate?.topAnchor.constraint(equalTo: view.topAnchor, constant: labelCardDateY).isActive = true
-        labelCardDate?.font = UIFont.systemFont(ofSize: 17, weight: .bold)
-        labelCardDate?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(clearCardDate)))
-        labelCardDate?.isUserInteractionEnabled = true
-        labelCardDate?.textColor = .white
-
-        let labelCardCVVX = viewX + 200
-        let labelCardCVVY = bottomY - 90
-
-        let labelHintTopY = viewY - 40
-        labelHintTop = UILabel(frame: CGRect(x: labelCardCVVX, y: labelCardCVVY, width: widht, height: 30))
-        view.addSubview(labelHintTop!)
-        labelHintTop?.translatesAutoresizingMaskIntoConstraints = false
-        labelHintTop?.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20).isActive = true
-        labelHintTop?.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
-        labelHintTop?.topAnchor.constraint(equalTo: view.topAnchor, constant: labelHintTopY).isActive = true
-        labelHintTop?.font = UIFont.systemFont(ofSize: 13, weight: .regular)
-        labelHintTop?.text = hintTopText
-        labelHintTop?.numberOfLines = 0
-        labelHintTop?.textAlignment = .center
-        labelHintTop?.textColor = .white
-
-        let labelHintBottomY = bottomY + 30
-        labelHintBottom = UILabel(frame: CGRect(x: labelCardCVVX, y: labelCardCVVY, width: widht, height: 30))
-        view.addSubview(labelHintBottom!)
-        labelHintBottom?.translatesAutoresizingMaskIntoConstraints = false
-        labelHintBottom?.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20).isActive = true
-        labelHintBottom?.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
-        labelHintBottom?.topAnchor.constraint(equalTo: view.topAnchor, constant: labelHintBottomY).isActive = true
-        labelHintBottom?.font = UIFont.systemFont(ofSize: 12, weight: .regular)
-        labelHintBottom?.text = hintBottomText
-        labelHintBottom?.numberOfLines = 0
-        labelHintBottom?.textAlignment = .center
-        labelHintBottom?.textColor = .white
-
-        let buttonCompleteX = viewX
-        let buttonCompleteY = UIScreen.main.bounds.height - 90
-        buttonComplete = UIButton(frame: CGRect(x: buttonCompleteX, y: buttonCompleteY, width: 100, height: 50))
-        view.addSubview(buttonComplete!)
-        buttonComplete?.translatesAutoresizingMaskIntoConstraints = false
-        buttonComplete?.leftAnchor.constraint(equalTo: view.leftAnchor, constant: viewX).isActive = true
-        buttonComplete?.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: viewX * -1).isActive = true
-        buttonComplete?.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -90).isActive = true
-        buttonComplete?.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        buttonComplete?.setTitle(buttonConfirmTitle, for: .normal)
-        buttonComplete?.backgroundColor = buttonConfirmBackgroundColor
-        buttonComplete?.layer.cornerRadius = 10
-        buttonComplete?.layer.masksToBounds = true
-        buttonComplete?.addTarget(self, action: #selector(scanCompleted), for: .touchUpInside)
-
         view.backgroundColor = .black
     }
 
-    // MARK: - Clear on touch
-    @objc func clearCardNumber() {
-        labelCardNumber?.text = ""
-        creditCardNumber = nil
-    }
-
-    @objc func clearCardDate() {
-        labelCardDate?.text = ""
-        creditCardDate = nil
-    }
 
     // MARK: - Completed process
     @objc func scanCompleted(creditCardNumber: String, creditCardDate: String, creditCardName: String) {
@@ -273,7 +181,7 @@ public class DGCardScanner: UIViewController {
             }
             
             if trimmed.contains("card") && trimmed.isOnlyAlpha {
-                if let cardName = parseCardName(line) {
+                if let cardName = parseCardName(line), cardName.isEmpty == false {
                     creditCardName = cardName
                     continue
                 }
