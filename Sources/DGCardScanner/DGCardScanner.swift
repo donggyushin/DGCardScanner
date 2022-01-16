@@ -5,6 +5,8 @@ import UIKit
 import Vision
 
 public class DGCardScanner: UIViewController {
+    public static var appearance = Appearance()
+    
     // MARK: - Private Properties
     private let captureSession = AVCaptureSession()
     private lazy var previewLayer: AVCaptureVideoPreviewLayer = {
@@ -22,6 +24,13 @@ public class DGCardScanner: UIViewController {
     private var creditCardDate: String?
 
     private let videoOutput = AVCaptureVideoDataOutput()
+    
+    private lazy var helperLabel: UILabel = {
+        let view = UILabel()
+        view.text = DGCardScanner.appearance.helperText
+        view.textColor = .white
+        return view
+    }()
 
     // MARK: - Instance dependencies
     private let resultsHandler: (_ number: String, _ date: String, _ name: String) -> Void
@@ -103,7 +112,16 @@ public class DGCardScanner: UIViewController {
         viewGuide.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
         viewGuide.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
         view.bringSubviewToFront(viewGuide)
-
+        
+        let bottomY = (UIScreen.main.bounds.height / 2) + (height / 2) - 100
+        let labelHintBottomY = bottomY + 30
+        
+        view.addSubview(helperLabel)
+        helperLabel.translatesAutoresizingMaskIntoConstraints = false
+        helperLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        helperLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: labelHintBottomY).isActive = true
+        
+        
         view.backgroundColor = .black
     }
 
@@ -280,5 +298,11 @@ class PartialTransparentView: UIView {
             UIGraphicsGetCurrentContext()?.setBlendMode(CGBlendMode.copy)
             path.fill()
         }
+    }
+}
+
+extension DGCardScanner {
+    public class Appearance {
+        public var helperText = "카드를 가운데에 정렬시키세요."
     }
 }
