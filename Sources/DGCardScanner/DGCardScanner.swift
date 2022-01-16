@@ -26,7 +26,6 @@ public class DGCardScanner: UIViewController {
     // MARK: - Public Properties
     public var labelCardNumber: UILabel?
     public var labelCardDate: UILabel?
-//    public var labelCardCVV: UILabel?
     public var labelHintBottom: UILabel?
     public var labelHintTop: UILabel?
     public var buttonComplete: UIButton?
@@ -145,15 +144,6 @@ public class DGCardScanner: UIViewController {
 
         let labelCardCVVX = viewX + 200
         let labelCardCVVY = bottomY - 90
-//        labelCardCVV = UILabel(frame: CGRect(x: labelCardCVVX, y: labelCardCVVY, width: 100, height: 30))
-//        view.addSubview(labelCardCVV!)
-//        labelCardCVV?.translatesAutoresizingMaskIntoConstraints = false
-//        labelCardCVV?.leftAnchor.constraint(equalTo: view.leftAnchor, constant: labelCardCVVX).isActive = true
-//        labelCardCVV?.topAnchor.constraint(equalTo: view.topAnchor, constant: labelCardCVVY).isActive = true
-//        labelCardCVV?.font = UIFont.systemFont(ofSize: 17, weight: .bold)
-//        labelCardCVV?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(clearCardCVV)))
-//        labelCardCVV?.isUserInteractionEnabled = true
-//        labelCardCVV?.textColor = .white
 
         let labelHintTopY = viewY - 40
         labelHintTop = UILabel(frame: CGRect(x: labelCardCVVX, y: labelCardCVVY, width: widht, height: 30))
@@ -208,11 +198,6 @@ public class DGCardScanner: UIViewController {
     @objc func clearCardDate() {
         labelCardDate?.text = ""
         creditCardDate = nil
-    }
-
-    @objc func clearCardCVV() {
-//        labelCardCVV?.text = ""
-//        creditCardCVV = nil
     }
 
     // MARK: - Completed process
@@ -287,17 +272,6 @@ public class DGCardScanner: UIViewController {
                 }
                 continue
             }
-
-//            if creditCardCVV == nil &&
-//                trimmed.count == 3 &&
-//                trimmed.isOnlyNumbers {
-//                creditCardCVV = line
-//                DispatchQueue.main.async {
-//                    self.labelCardCVV?.text = line
-//                    self.tapticFeedback()
-//                }
-//                continue
-//            }
 
             if creditCardDate == nil &&
                 trimmed.count >= 5 && // 12/20
