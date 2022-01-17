@@ -33,3 +33,11 @@ let scannerView = DGCardScanner.getScanner { number, date, name in
 self.present(scannerView, animated: true)
 ```
 
+## High hit rate cards 
+```Please let me know if there is a card that you want to add by posting at Issues tab```
+- NH
+- Shinhan
+- WOORI
+- KB
+- KAKAOBANK
+
