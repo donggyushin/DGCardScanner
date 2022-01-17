@@ -24,8 +24,6 @@ pod 'DGCardScanner', :git => 'https://github.com/donggyushin/DGCardScanner'
 
 ## Usage
 ```
-
-
 DGCardScanner.appearance.helperText = "Change helper text"
 let scannerView = DGCardScanner.getScanner { number, date, name in
 
