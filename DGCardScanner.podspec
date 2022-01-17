@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name             = 'DGCardScanner'
-    s.version          = '1.0.0'
+    s.version          = '1.0.1'
     s.summary          = 'A credit card scanner'
     s.homepage         = 'https://github.com/donggyushin/DGCardScanner'
     s.license          = { :type => 'MIT', :file => 'LICENSE.md' }

@@ -206,6 +206,10 @@ public class DGCardScanner: UIViewController {
                     continue
                 }
             }
+            
+            if let cardName = CARD.allCases.first(where: { trimmed.contains($0.rawValue.lowercased()) }).map({ $0.rawValue }) {
+                creditCardName = cardName
+            }
         }
         
         guard let creditCardName = self.creditCardName, let creditCardDate = self.creditCardDate, let creditCardNumber = self.creditCardNumber else { return }
@@ -318,4 +322,12 @@ extension DGCardScanner {
         let cardDate: String
         let cardNumber: String
     }
+}
+
+enum CARD: String, CaseIterable {
+    case NH
+    case Shinhan
+    case KB
+    case WOORI
+    case KAKAOBANK
 }
